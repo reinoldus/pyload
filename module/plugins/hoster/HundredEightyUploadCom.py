@@ -15,30 +15,22 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.    #
 ############################################################################
 
-from module.plugins.internal.MultiHoster import MultiHoster
-from module.network.RequestFactory import getURL
-from module.common.json_layer import json_loads
+from module.plugins.hoster.XFileSharingPro import XFileSharingPro, create_getInfo
 
 
-class UnrestrictLi(MultiHoster):
-    __name__ = "UnrestrictLi"
-    __version__ = "0.02"
-    __type__ = "hook"
-    __config__ = [("activated", "bool", "Activated", "False"),
-                  ("hosterListMode", "all;listed;unlisted", "Use for hosters (if supported)", "all"),
-                  ("hosterList", "str", "Hoster list (comma separated)", ""),
-                  ("unloadFailing", "bool", "Revert to standard download if download fails", "False"),
-                  ("interval", "int", "Reload interval in hours (0 to disable)", "24"),
-                  ("history", "bool", "Delete History", "False")]
-
-    __description__ = """Unrestrict.li hook plugin"""
+class HundredEightyUploadCom(XFileSharingPro):
+    __name__ = "HundredEightyUploadCom"
+    __type__ = "hoster"
+    __pattern__ = r"http://(?:\w*\.)?180upload\.com/(\w+).*"
+    __version__ = "0.01"
+    __description__ = """180upload.com hoster plugin"""
     __author_name__ = ("stickell")
     __author_mail__ = ("l.stickell@yahoo.it")
 
-    def getHoster(self):
-        json_data = getURL('http://unrestrict.li/api/jdownloader/hosts.php?format=json')
-        json_data = json_loads(json_data)
+    FILE_NAME_PATTERN = r'Filename:</b></td><td nowrap>(?P<N>.+)</td></tr>-->'
+    FILE_SIZE_PATTERN = r'Size:</b></td><td>(?P<S>[\d.]+) (?P<U>[A-Z]+)\s*<small>'
 
-        host_list = [element['host'] for element in json_data['result']]
+    HOSTER_NAME = "180upload.com"
 
-        return host_list
+
+getInfo = create_getInfo(HundredEightyUploadCom)
